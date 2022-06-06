@@ -1,0 +1,29 @@
+{
+  "name": "vitebackend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "ant-design-vue": "^3.2.5",
+    "axios": "^0.27.2",
+    "less": "^4.1.2",
+    "lodash-es": "^4.17.21",
+    "vue": "^3.2.25",
+    "vue-router": "4",
+    "vuex": "4"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.39",
+    "@vitejs/plugin-legacy": "^1.8.2",
+    "@vitejs/plugin-vue": "^2.3.3",
+    "regenerator-runtime": "^0.13.9",
+    "sass": "^1.52.1",
+    "unplugin-vue-components": "^0.19.6",
+    "vite": "^2.9.9",
+    "vite-plugin-vue-setup-extend": "^0.4.0"
+  }
+}
