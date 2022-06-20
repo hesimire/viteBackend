@@ -103,8 +103,10 @@ export default defineComponent({
       captchaInput: "",
     });
 
+    // 按钮加载状态
     const iconLoading = ref(false);
 
+    // 登录方法
     const onFinish = async (values) => {
       if (
         formState.captchaInput.toLowerCase() === formState.text.toLowerCase()
@@ -129,10 +131,12 @@ export default defineComponent({
       }
     };
 
+    //错误处理
     const onFinishFailed = (errorInfo) => {
       console.log("Failed:", errorInfo);
     };
 
+    // 判断登录按钮
     const disabled = computed(() => {
       return !(
         formState.account &&
