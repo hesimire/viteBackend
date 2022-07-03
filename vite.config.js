@@ -10,6 +10,7 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // 配置前端服务地址和端口
   plugins: [
     vue(),
     // 浏览器适配配置
@@ -25,6 +26,9 @@ export default defineConfig({
     VueSetupExtend()
   ],
   server: {
+    port: 3002,
+    // 是否开启 https
+    https: false,
     proxy: {
       // with options
       '/api': {

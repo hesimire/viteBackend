@@ -6,7 +6,6 @@
       <section class="login-title">
         <h2>商城后台管理</h2>
       </section>
-
       <!-- 登录表单 -->
       <a-form
         :model="formState"
@@ -78,15 +77,22 @@
   </section>
 </template>
 <script>
-import { defineComponent, reactive, computed, ref } from "vue";
+import {
+  defineComponent,
+  reactive,
+  computed,
+  ref,
+  watch,
+  onMounted,
+} from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import "ant-design-vue/es/message/style/css";
 import request from "../api";
 import VueRouter from "../router/index";
+import { userStore } from "../store/user";
 export default defineComponent({
   name: "LoginViews",
-
   components: {
     UserOutlined,
     LockOutlined,
@@ -95,8 +101,8 @@ export default defineComponent({
   setup() {
     // 表格内容
     const formState = reactive({
-      account: "",
-      password: "",
+      account: "admin",
+      password: "123456",
       remember: true,
       captchaIMG: "",
       text: "",
@@ -105,6 +111,14 @@ export default defineComponent({
 
     // 按钮加载状态
     const iconLoading = ref(false);
+
+    const userPinia = userStore();
+
+    console.log("userPinia:", userPinia);
+
+    watch(userPinia, (newValue, oldValue) => {
+      localStorage.setItem("piniaUserState", JSON.stringify(newValue));
+    });
 
     // 登录方法
     const onFinish = async (values) => {
@@ -115,13 +129,15 @@ export default defineComponent({
         const res = await request.post("/api/routeUsers/login", values);
         console.log(res.data);
         if (res.status == 200 && res.data.err_code == 0) {
-          console.log('登录成功');
-          VueRouter.push({
-            path:'/home/system/systemIntroduce'
-          });
-          iconLoading.value = false;
+          let result = await userPinia.myLogin(res.data.userData);
+          if (result.err_code == 0) {
+            iconLoading.value = false;
+            VueRouter.push({
+              path: "/home",
+            });
+          }
         } else {
-          console.log('登录失败');
+          console.log("登录失败");
           message.error(res.data.message);
           iconLoading.value = false;
         }
@@ -152,6 +168,11 @@ export default defineComponent({
       formState.text = res.data.text;
     };
     setCaptcha();
+
+    onMounted(() => {
+      let userState = localStorage.getItem("piniaUserState");
+      console.log(userState);
+    });
 
     return {
       formState,

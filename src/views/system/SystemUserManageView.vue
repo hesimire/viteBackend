@@ -1,7 +1,7 @@
 <template>
   <section>
     <h2>系统用户管理</h2>
-    <a-divider />
+    <!-- <a-divider /> -->
     <a-button type="primary" shape="round" @click="showModal">
       <template #icon>
         <plus-circle-two-tone />
@@ -92,10 +92,6 @@
               v-if="editableData[record.key]"
               class="editable-cell-input-wrapper"
             >
-              <!-- <a-input
-                v-model:value="editableData[record.key].status"
-                @pressEnter="save(record.key)"
-              /> -->
               <a-select
                 ref="select"
                 v-model:value="editableData[record.key].status"
@@ -140,7 +136,7 @@
 <script>
 import request from "@/api/index.js";
 import { cloneDeep } from "lodash-es";
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive, ref, onMounted } from "vue";
 import { userType, returnRouteType } from "../../utils/type";
 import {
   CheckOutlined,
@@ -176,22 +172,6 @@ const columns = [
   },
 ];
 
-// 获取权限管理人员data
-async function getList() {
-  let res = await request.get("/api/routeUsers/getList");
-  // console.log(typeof res.data.dataList[0]._id);
-  let ListData = [];
-  for (let i = 0; i < res.data.dataList.length; i++) {
-    ListData.push({
-      key: res.data.dataList[i]._id,
-      account: res.data.dataList[i].account,
-      password: res.data.dataList[i].password,
-      status: userType[res.data.dataList[i].status],
-    });
-  }
-  return ListData;
-}
-
 export default defineComponent({
   name: "usersListView",
   components: {
@@ -210,6 +190,8 @@ export default defineComponent({
     const editableData = reactive({});
     const dataSource = reactive([]);
 
+    // 获取权限管理人员data
+
     const getList = async () => {
       let res = await request.get("/api/routeUsers/getList");
 
@@ -224,8 +206,6 @@ export default defineComponent({
       });
     };
 
-    getList();
-
     // 编辑功能
     const edit = (key) => {
       console.log(key);
@@ -238,7 +218,6 @@ export default defineComponent({
 
     // 保存功能
     const save = async (key) => {
-
       const resData = await request.post(
         "/api/routeUsers/updateRouteUser",
         editableData[key]
@@ -260,12 +239,12 @@ export default defineComponent({
 
     // 删除功能
     const deleteData = async (key) => {
-      const resData = await request.post(
-        "/api/routeUsers/deleteRouteUser",
-       { _id:key}
-      );
+      const resData = await request.post("/api/routeUsers/deleteRouteUser", {
+        _id: key,
+      });
       if (resData.status == 200 && resData.data.err_code == 0) {
         message.success(resData.data.message);
+        getList();
       }
       delete editableData[key];
     };
@@ -295,6 +274,10 @@ export default defineComponent({
       // console.log(res);
       // visible.value = false;
     };
+
+    onMounted(() => {
+      getList();
+    });
 
     return {
       dataSource,
